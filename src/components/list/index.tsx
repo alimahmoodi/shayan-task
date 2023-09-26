@@ -1,30 +1,57 @@
-import { faker } from "@faker-js/faker/locale/fa";
 import { Card } from "./card";
 import { CardContent } from "./card/cardContent";
+import { useEffect, useState } from "react";
 
-const fakeData = [...new Array(450)].map((_, index) => {
-  return {
-    fullName: faker.person.fullName({
-      sex: index % 2 === 0 ? "female" : "male",
-    }),
-    sex: index % 2 === 0 ? "خانم" : "آقا",
-    id: index,
-    jobTitle: faker.person.jobTitle(),
-    jobType: faker.person.jobType(),
-    vehicle: faker.vehicle.manufacturer(),
-  };
-});
+interface CardContentProps {
+  fullName: string;
+  sex: string;
+  jobTitle: string;
+  jobType: string;
+  vehicle: string;
+  id: number;
+}
 
 const List = () => {
+  const [fakeData, setFakeData] = useState<CardContentProps[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    fetch("http://localhost:3100/api/users")
+      .then((res) => res.json())
+      .then((data) => {
+        setFakeData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
   return (
     <>
-      {fakeData.map(({ id, ...rest }) => {
-        return (
-          <Card key={id}>
-            <CardContent {...rest} />
-          </Card>
-        );
-      })}
+      {!loading ? (
+        fakeData.map(({ id, ...rest }) => {
+          return (
+            <Card key={id}>
+              <CardContent {...rest} />
+            </Card>
+          );
+        })
+      ) : (
+        <p
+          style={{
+            height: "100%",
+            textAlign: "center",
+            direction: "ltr",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          loading...
+        </p>
+      )}
     </>
   );
 };
