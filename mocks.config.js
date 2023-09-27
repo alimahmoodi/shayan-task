@@ -1,11 +1,11 @@
-module.exports = (config) => {
+module.exports = () => {
   return {
     mock: {
       collections: {
         selected: "users-collection",
       },
       routes: {
-        delay: 3000,
+        delay: 1000,
       },
     },
   };
