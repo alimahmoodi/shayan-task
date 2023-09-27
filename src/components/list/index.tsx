@@ -1,40 +1,24 @@
+import { useUsersUsingGetQuery } from "services/endpoints";
 import { Card } from "./card";
 import { CardContent } from "./card/cardContent";
-import { useEffect, useState } from "react";
-
-interface CardContentProps {
-  fullName: string;
-  sex: string;
-  jobTitle: string;
-  jobType: string;
-  vehicle: string;
-  id: number;
-}
+import { useNavigate } from "react-router-dom";
 
 const List = () => {
-  const [fakeData, setFakeData] = useState<CardContentProps[]>([]);
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true);
-    fetch("http://localhost:3100/api/users")
-      .then((res) => res.json())
-      .then((data) => {
-        setFakeData(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  const { data, isLoading } = useUsersUsingGetQuery();
+  const navigate = useNavigate();
+  const handleMoreDetails = () => {
+    navigate({ pathname: "details" });
+  };
   return (
     <>
-      {!loading ? (
-        fakeData.map(({ id, ...rest }) => {
+      {!isLoading ? (
+        data?.map(({ id, ...rest }) => {
           return (
             <Card key={id}>
-              <CardContent {...rest} />
+              <div>
+                <CardContent {...rest} />
+                <button onClick={handleMoreDetails}>More Details!</button>
+              </div>
             </Card>
           );
         })
