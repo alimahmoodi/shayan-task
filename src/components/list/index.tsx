@@ -1,30 +1,41 @@
-import { faker } from "@faker-js/faker/locale/fa";
+import { useUsersUsingGetQuery } from "services/endpoints";
 import { Card } from "./card";
 import { CardContent } from "./card/cardContent";
-
-const fakeData = [...new Array(450)].map((_, index) => {
-  return {
-    fullName: faker.person.fullName({
-      sex: index % 2 === 0 ? "female" : "male",
-    }),
-    sex: index % 2 === 0 ? "خانم" : "آقا",
-    id: index,
-    jobTitle: faker.person.jobTitle(),
-    jobType: faker.person.jobType(),
-    vehicle: faker.vehicle.manufacturer(),
-  };
-});
+import { useNavigate } from "react-router-dom";
 
 const List = () => {
+  const { data, isLoading } = useUsersUsingGetQuery();
+  const navigate = useNavigate();
+  const handleMoreDetails = () => {
+    navigate({ pathname: "details" });
+  };
   return (
     <>
-      {fakeData.map(({ id, ...rest }) => {
-        return (
-          <Card key={id}>
-            <CardContent {...rest} />
-          </Card>
-        );
-      })}
+      {!isLoading ? (
+        data?.map(({ id, ...rest }) => {
+          return (
+            <Card key={id}>
+              <div>
+                <CardContent {...rest} />
+                <button onClick={handleMoreDetails}>More Details!</button>
+              </div>
+            </Card>
+          );
+        })
+      ) : (
+        <p
+          style={{
+            height: "100%",
+            textAlign: "center",
+            direction: "ltr",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          loading...
+        </p>
+      )}
     </>
   );
 };
