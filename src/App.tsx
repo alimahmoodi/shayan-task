@@ -4,6 +4,7 @@ import { store } from "services/store";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Details } from "components/details";
 import { ThemeProvider, createTheme } from "@mui/material";
+import { Root } from "components/root";
 
 const theme = createTheme({
   typography: {
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />} />
             <Route path="/details/:id" element={<Details />} />
+            <Route path="*" element={<Root />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
