@@ -7,6 +7,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { FormValues } from "components/layout";
 import { findWord } from "utils/findWord";
 import { useDebounce } from "utils/useDebounce";
+import { useStyles } from "./style";
 
 export interface itemsInLocalStorage {
   history: UsersList[];
@@ -16,6 +17,7 @@ const List = () => {
   const { control } = useFormContext<FormValues>();
   const { searchin, searchValue } = useWatch<FormValues>({ control });
   const { data, isLoading } = useUsersUsingGetQuery();
+  const classes = useStyles();
   const navigate = useNavigate();
   const handleMoreDetails = (id: string) => {
     navigate({ pathname: `details/${id}` });
@@ -64,31 +66,24 @@ const List = () => {
   return (
     <>
       {!isLoading ? (
-        filterData?.map(({ id, ...rest }) => {
-          return (
-            <Card key={id}>
-              <div>
-                <CardContent {...rest} />
-                <Button onClick={() => handleMoreDetails(id)}>
-                  مشاهده جزییات
-                </Button>
-              </div>
-            </Card>
-          );
-        })
+        filterData?.length === 0 ? (
+          <p className={classes["loading"]}>اطلاعاتی یافت نشد!</p>
+        ) : (
+          filterData?.map(({ id, ...rest }) => {
+            return (
+              <Card key={id}>
+                <div>
+                  <CardContent {...rest} />
+                  <Button onClick={() => handleMoreDetails(id)}>
+                    مشاهده جزییات
+                  </Button>
+                </div>
+              </Card>
+            );
+          })
+        )
       ) : (
-        <p
-          style={{
-            height: "100%",
-            textAlign: "center",
-            direction: "rtl",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          لطفا صبرکنید...!
-        </p>
+        <p className={classes["loading"]}>لطفا صبرکنید...!</p>
       )}
     </>
   );
