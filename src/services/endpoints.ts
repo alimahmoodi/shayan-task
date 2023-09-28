@@ -1,5 +1,5 @@
 import { baseApiQuery as api } from "./baseApiQuery";
-const injectedRtkApi = api.injectEndpoints({
+export const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     usersUsingGet: build.query<UsersList[], void>({
       query: () => ({
@@ -13,9 +13,10 @@ export { injectedRtkApi as nmsApi };
 export interface UsersList {
   fullName: string;
   gender: "male" | "female";
-  id: number;
+  id: string;
   jobTitle: string;
   jobType: string;
   vehicle: string;
+  description: string;
 }
 export const { useUsersUsingGetQuery } = injectedRtkApi;
