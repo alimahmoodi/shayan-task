@@ -18,34 +18,35 @@ const List = () => {
   const { data, isLoading } = useUsersUsingGetQuery();
   const navigate = useNavigate();
   const handleMoreDetails = (id: string) => {
-    if (searchValue) {
-      const item = data?.find(({ id: _id }) => id === _id);
-      const history = localStorage.getItem("history");
-      const itemsInLocalStorage = history
-        ? (JSON.parse(history) as itemsInLocalStorage)
-        : null;
-      const isAlreadyExist = itemsInLocalStorage?.history.find(
-        ({ id: _id }) => _id === id
-      );
-
-      if (itemsInLocalStorage?.history.length === 4) {
-        itemsInLocalStorage.history.splice(3, 1);
-      }
-
-      const newHistory = itemsInLocalStorage
-        ? JSON.stringify({
-            history: [
-              ...(!isAlreadyExist ? [item] : []),
-              ...itemsInLocalStorage.history,
-            ],
-          })
-        : JSON.stringify({
-            history: [item],
-          });
-
-      localStorage.setItem("history", newHistory);
-    }
     navigate({ pathname: `details/${id}` });
+
+    const item = data?.find(({ id: _id }) => id === _id);
+    const history = localStorage.getItem("history");
+
+    const itemsInLocalStorage = history
+      ? (JSON.parse(history) as itemsInLocalStorage)
+      : null;
+    const isAlreadyExist = itemsInLocalStorage?.history.find(
+      ({ id: _id }) => _id === id
+    );
+    if (isAlreadyExist) return;
+
+    if (itemsInLocalStorage?.history.length === 4) {
+      itemsInLocalStorage.history.splice(3, 1);
+    }
+
+    const newHistory = itemsInLocalStorage
+      ? JSON.stringify({
+          history: [
+            ...(!isAlreadyExist ? [item] : []),
+            ...itemsInLocalStorage.history,
+          ],
+        })
+      : JSON.stringify({
+          history: [item],
+        });
+
+    localStorage.setItem("history", newHistory);
   };
 
   const search = useDebounce(500, searchValue ?? "");
